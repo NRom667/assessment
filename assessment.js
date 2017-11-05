@@ -1,55 +1,53 @@
-(function () {
+(function(){
     'use strict';
     const userNameInput = document.getElementById('user-name');
-    const assessmentButton = document.getElementById('assessment');
+    const assesmentButton = document.getElementById('assesment');
     const resultDivided = document.getElementById('result-area');
     const tweetDivided = document.getElementById('tweet-area');
 
     /**
-    * 指定した要素の子どもを全て除去する
-    * @param {HTMLElement} element HTMLの要素
-    */
-    function removeAllChildren(element) {
-        while (element.firstChild) { // 子どもの要素があるかぎり削除
+     * 
+     * 指定した要素の子供を全て削除する
+     * 
+     */
+    function removeAllChirdren(element){
+        while(element.firstChild){  //子要素がある限り
             element.removeChild(element.firstChild);
         }
     }
 
-    assessmentButton.onclick = () => {
+
+    assesmentButton.onclick = function(){
         const userName = userNameInput.value;
-        if (userName.length === 0) { // 名前が空の時は処理を終了する
+        if(userName.length===0){
             return;
         }
+        
+        //診断結果エリアの掃除(子をすべて削除)
+        removeAllChirdren(resultDivided);
 
-        // 診断結果表示エリアの作成
-        removeAllChildren(resultDivided);
+        //診断結果エリアの表示
         const header = document.createElement('h3');
         header.innerText = '診断結果';
         resultDivided.appendChild(header);
 
         const paragraph = document.createElement('p');
-        const result = assessment(userName);
+        const result = assesment(userName);
         paragraph.innerText = result;
         resultDivided.appendChild(paragraph);
 
-        // ツイートエリアの作成
-        removeAllChildren(tweetDivided);
+        //ツイートエリアの作成
+        removeAllChirdren(tweetDivided);
         const anchor = document.createElement('a');
         const hrefValue = 'https://twitter.com/intent/tweet?button_hashtag=%E3%81%82%E3%81%AA%E3%81%9F%E3%81%AE%E3%81%84%E3%81%84%E3%81%A8%E3%81%93%E3%82%8D&text='
-        + encodeURIComponent(result);
-        anchor.setAttribute('href', hrefValue);
+            + encodeURIComponent(result);
+        anchor.setAttribute('href',hrefValue);
         anchor.className = 'twitter-hashtag-button';
-        anchor.innerText = 'Tweet #%E3%81%82%E3%81%AA%E3%81%9F%E3%81%AE%E3%81%84%E3%81%84%E3%81%A8%E3%81%93%E3%82%8D';
+        anchor.innerHTML = 'Tweet #%E3%81%82%E3%81%AA%E3%81%9F%E3%81%AE%E3%81%84%E3%81%84%E3%81%A8%E3%81%93%E3%82%8D';
         tweetDivided.appendChild(anchor);
-
-        twttr.widgets.load();
-    };
-
-    userNameInput.onkeydown = (event) => {
-        if (event.keyCode === 13) {
-            assessmentButton.onclick();
+        function w(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}
+        w(document, 'script', 'twitter-wjs');
         }
-    };
 
     const answers = [
         '{userName}のいいところは声です。{userName}の特徴的な声はみなを惹きつけ、心に残ります。',
@@ -71,33 +69,30 @@
         '{userName}のいいところは優しさです。{userName}の優しい雰囲気や立ち振舞に多くの人が癒やされています。'
     ];
 
+
+
     /**
-    * 名前の文字列を渡すと診断結果を返す関数
-    * @param {string} userName ユーザーの名前
-    * @return {string} 診断結果
-    */
-    function assessment(userName) {
-        // 全文字のコード番号を取得してそれを足し合わせる
+     * 名前の文字列から診断結果を返す関数
+     * @param {string} userName ユーザーの名前
+     * @return {string} 診断結果
+     * 
+     */
+    function assesment(userName){
+        //全文字のコード番号を足す
         let sumOfcharCode = 0;
-        for (let i = 0; i < userName.length; i++) {
+        for(let i = 0; i< userName.length; i++){
             sumOfcharCode = sumOfcharCode + userName.charCodeAt(i);
         }
 
-        // 文字のコード番号の合計を回答の数で割って添字の数値を求める
+        //合計を回答の数で割る
         const index = sumOfcharCode % answers.length;
         let result = answers[index];
-
-        result = result.replace(/{userName}/g, userName);
+        result = result.replace(/\{userName\}/g,userName);
         return result;
     }
+    
 
-    // テストコード
-    console.assert(
-        assessment('太郎') === '太郎のいいところは決断力です。太郎がする決断にいつも助けられる人がいます。',
-        '診断結果の文言の特定の部分を名前に置き換える処理が正しくありません。'
-    );
-    console.assert(
-        assessment('太郎') === assessment('太郎'),
-        '入力が同じ名前なら同じ診断結果を出力する処理が正しくありません。'
-    );
+
+
+
 })();
